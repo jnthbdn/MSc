@@ -1,0 +1,248 @@
+<div id="grid-container" style="width: 100%; height: 100%;">
+</div>
+<div id="overlay" style="width: 100%; height: 100%; background-color: #00000080; z-index: 9999999; display: none; position: absolute; top: 0; left: 0;">
+</div>
+
+<script>
+    // let UNCHECK_COLOR = "white";
+    // let CHECK_COLOR = "black";
+
+    // let intervalId;
+    // let grid_size = 5;
+    // let results = [
+    //     [2, 3],
+    //     [1, 4],
+    //     [2,1, 1, 1],
+    //     [0, 3],
+    //     [1, 1, 1, 1]
+    // ];
+    
+
+    // window.toggle_cell_color = (cell) => {
+    //     cell.style.backgroundColor = cell.style.backgroundColor == UNCHECK_COLOR ? CHECK_COLOR : UNCHECK_COLOR;
+    // }
+
+    // function create_grid(size, linesInfos, parentID){
+
+    //     let grid_code = "<table style=\"border-collapse: collapse; max-width: 100%; max-height: 100%;\">";
+    //     let container = document.getElementById(parentID);
+    //     let pixelSize = Math.floor( Math.min( container.clientWidth / (size+1.5), container.clientHeight / size ) );
+
+    //     for( let y = 0; y < size; ++y ){
+    //         grid_code += "<tr>";
+
+    //         for( let x = 0; x < size; ++x ){
+    //             grid_code += `<td id=\"cell_${x}_${y}\" style="width: ${pixelSize}px; height: ${pixelSize}px; border: 1px solid black; background-color: ${UNCHECK_COLOR};" onclick="toggle_cell_color(this)"></td>`;
+    //         }
+
+    //         grid_code += `<td id=\"info_${y}\" style="width: ${pixelSize*1.5}px; overflow: hidden; height: ${pixelSize}px; border: 1px solid black; font-size: ${pixelSize/2}px">${linesInfos[y]}</td>`;
+    //         grid_code += "</tr>";
+    //     }
+
+    //     grid_code += "</table>";
+
+    //     container.innerHTML = grid_code;
+    // }
+
+    // function check_grid(size, results, intervalID){
+    //     let line = [];
+    //     let isPreviousUncheck = true;
+
+    //     for( let y = 0; y < size; ++y ){
+    //         line = [0];
+    //         isPreviousUncheck = true;
+
+    //         for( let x = 0; x < size; ++x ){
+    //             let cellColor = document.getElementById(`cell_${x}_${y}`).style.backgroundColor;
+
+    //             if( cellColor == UNCHECK_COLOR ){
+    //                 if( isPreviousUncheck ){
+    //                     line[line.length - 1]++;
+    //                 }
+    //                 else{
+    //                     line.push(1);
+    //                     isPreviousUncheck = true;
+    //                 }
+    //             }
+    //             else{
+    //                 if( isPreviousUncheck ){
+    //                     line.push(1);
+    //                     isPreviousUncheck = false;
+    //                 }
+    //                 else{
+    //                     line[line.length - 1]++;
+    //                 }
+    //             }
+    //         }
+
+    //         if( isPreviousUncheck && line.length > 1 ){
+    //             line.splice(-1, 1); //Remove last white count
+    //         }
+
+    //         if( !isArraysEquals(line, results[y]) ){
+    //             return;
+    //         }
+    //     }
+
+    //     clearInterval(intervalID);
+    //     document.getElementById("overlay").style.display = "block";
+    //     alert("You won !");
+    // }
+
+    // function isArraysEquals(a, b){
+    //     return JSON.stringify(a) === JSON.stringify(b);
+    // }
+
+    // function generate_infos(results){
+    //     let infos= [];
+
+    //     results.forEach(line => {
+    //         let infoLine = "";
+    //         let isUnckeck = true;
+
+    //         line.forEach( nb => {
+    //             infoLine += `<span style="border: 1px solid black;`;
+
+    //             if( isUnckeck ){
+    //                 infoLine += `background-color: ${UNCHECK_COLOR}; color: ${CHECK_COLOR};">`;
+    //             }
+    //             else{
+    //                 infoLine += `background-color: ${CHECK_COLOR}; color: ${UNCHECK_COLOR};">`;
+    //             }
+
+    //             infoLine += `${nb}</span>`
+    //             isUnckeck = !isUnckeck;
+    //         });
+
+    //         infos.push(infoLine);
+    //     });
+
+    //     return infos;
+    // }
+
+
+    // create_grid(grid_size, generate_infos(results), "grid-container");
+    // intervalId = setInterval( () => check_grid(grid_size, results, intervalId), 2000);
+
+
+    let UNCHECK_COLOR = "white";
+    let CHECK_COLOR = "black";
+
+    let intervalId;
+    let grid_size = 5;
+    let results = [
+        [2, 3],
+        [1, 4],
+        [2,1, 1, 1],
+        [0, 3],
+        [1, 1, 1, 1]
+    ];
+    
+
+    window.toggle_cell_color = (cell) => {
+        cell.style.backgroundColor = cell.style.backgroundColor == UNCHECK_COLOR ? CHECK_COLOR : UNCHECK_COLOR;
+    }
+
+    function create_grid(size, linesInfos, parentID){
+
+        let grid_code = "<table style=\"border-collapse: collapse; max-width: 100%; max-height: 100%;\">";
+        let container = document.getElementById(parentID);
+        let pixelSize = Math.floor( Math.min( container.clientWidth / (size+1.5), container.clientHeight / size ) );
+
+        for( let y = 0; y < size; ++y ){
+            grid_code += "<tr>";
+
+            for( let x = 0; x < size; ++x ){
+                grid_code += `<td id=\"cell_${x}_${y}\" style="width: ${pixelSize}px; height: ${pixelSize}px; border: 1px solid black; background-color: ${UNCHECK_COLOR};" onclick="toggle_cell_color(this)"></td>`;
+            }
+
+            grid_code += `<td id=\"info_${y}\" style="width: ${pixelSize*1.5}px; overflow: hidden; height: ${pixelSize}px; border: 1px solid black; font-size: ${pixelSize/2}px">${linesInfos[y]}</td>`;
+            grid_code += "</tr>";
+        }
+
+        grid_code += "</table>";
+
+        container.innerHTML = grid_code;
+    }
+
+    function check_grid(size, results, intervalID){
+        let line = [];
+        let isPreviousUncheck = true;
+
+        for( let y = 0; y < size; ++y ){
+            line = [0];
+            isPreviousUncheck = true;
+
+            for( let x = 0; x < size; ++x ){
+                let cellColor = document.getElementById(`cell_${x}_${y}`).style.backgroundColor;
+
+                if( cellColor == UNCHECK_COLOR ){
+                    if( isPreviousUncheck ){
+                        line[line.length - 1]++;
+                    }
+                    else{
+                        line.push(1);
+                        isPreviousUncheck = true;
+                    }
+                }
+                else{
+                    if( isPreviousUncheck ){
+                        line.push(1);
+                        isPreviousUncheck = false;
+                    }
+                    else{
+                        line[line.length - 1]++;
+                    }
+                }
+            }
+
+            if( isPreviousUncheck && line.length > 1 ){
+                line.splice(-1, 1); //Remove last white count
+            }
+
+            if( !isArraysEquals(line, results[y]) ){
+                return;
+            }
+        }
+
+        clearInterval(intervalID);
+        document.getElementById("overlay").style.display = "block";
+        alert("You won !");
+    }
+
+    function isArraysEquals(a, b){
+        return JSON.stringify(a) === JSON.stringify(b);
+    }
+
+    function generate_infos(results){
+        let infos= [];
+
+        results.forEach(line => {
+            let infoLine = "";
+            let isUnckeck = true;
+
+            line.forEach( nb => {
+                infoLine += `<span style="border: 1px solid black;`;
+
+                if( isUnckeck ){
+                    infoLine += `background-color: ${UNCHECK_COLOR}; color: ${CHECK_COLOR};">`;
+                }
+                else{
+                    infoLine += `background-color: ${CHECK_COLOR}; color: ${UNCHECK_COLOR};">`;
+                }
+
+                infoLine += `${nb}</span>`
+                isUnckeck = !isUnckeck;
+            });
+
+            infos.push(infoLine);
+        });
+
+        return infos;
+    }
+
+
+    create_grid(grid_size, generate_infos(results), "grid-container");
+    intervalId = setInterval( () => check_grid(grid_size, results, intervalId), 2000);
+
+</script>
