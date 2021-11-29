@@ -4,22 +4,44 @@
 </div>
 
 <script>
+
+
+    let puzzles = [
+        [
+            [2, 3],
+            [1, 4],
+            [2,1, 1, 1],
+            [0, 3],
+            [1, 1, 1, 1]
+        ],
+        [
+            [1, 2, 1, 1],
+            [2, 3],
+            [1, 1, 1, 1],
+            [0, 3, 1, 1],
+            [0, 2, 2, 1]
+        ],
+        [
+            [0, 5],
+            [4, 1],
+            [1, 1, 2, 1],
+            [2, 3],
+            [3, 2]
+        ]
+    ];
+
+
+
     class CompressImage{
 
         static UNCHECK_COLOR = "white";
         static CHECK_COLOR = "black";
         
         
-        constructor(container_id){
+        constructor(size, solution, container_id){
             
-            this.grid_size = 5;
-            this.results = [
-                [2, 3],
-                [1, 4],
-                [2,1, 1, 1],
-                [0, 3],
-                [1, 1, 1, 1]
-            ];
+            this.grid_size = size;
+            this.results = solution;
 
 
             this.create_grid(container_id);
@@ -137,7 +159,13 @@
         }
     };
 
-    var grid = new CompressImage("grid-container");
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
+
+
+    var random_puzzle = puzzles[getRandomInt(puzzles.length)];
+    var grid = new CompressImage(random_puzzle.length, random_puzzle, "grid-container");
 
 
 </script>
