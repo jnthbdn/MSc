@@ -7,17 +7,21 @@
     #chessboard tr td, #chessboard tr th {
         padding: 0;
         margin: 0;
-    }
-
-    #chessboard tr th{
         vertical-align: middle;
-        font-weight: normal;
+        text-align: center;
+        position: relative;
     }
 
-    #chessboard div.takeAllPlace {
+    #chessboard div.takeAllPlace, #chessboard .selection {
         width: 100%;
         height: 100%;
-        float: left;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    #chessboard .selection {
+        background: radial-gradient(circle, rgba(255,255,255,0) 40%, rgba(50, 50, 255, 1) 100%);
     }
 
     #chessboard div.centerMe {
@@ -29,25 +33,26 @@
 
 <script>
 
-    
-
     class Mat1Coup {
         static BLACK_CELL = "#AAAAAA";
         static WHITE_CELL = "#FFFFFF";
         static BLACK_CELL_HOVER = "#222255";
         static WHITE_CELL_HOVER = "#AAAAFF";
-        static INFOS_CELL = "#DDDDDD";
+        static INFOS_CELL = "#FFFFFF";
 
         static WHITE_PIECES = { "K": "&#9812;", "Q": "&#9813;", "R": "&#9814;", "B": "&#9815;", "N": "&#9816;", "P": "&#9817;" };
         static BLACK_PIECES = { "K": "&#9818;", "Q": "&#9819;", "R": "&#9820;", "B": "&#9821;", "N": "&#9822;", "P": "&#9823;" };
 
-        constructor(elementID){
+        constructor(elementID, positions, result){
             let container = document.getElementById(elementID);
             let cellSize = Math.floor( Math.min( container.clientHeight, container.clientWidth ) / 9 );
 
             this.createGrid( elementID, cellSize );
+            this.placePieces(positions);
 
             this.selectCell = null;
+            this.result = result;
+            this.container = container;
         }
 
         createGrid(elementID, cellSize){
@@ -61,7 +66,7 @@
 
             this.crearteGridLetter(table, cellSize);
 
-            for( let y = 1; y < 9; ++y ){
+            for( let y = 8; y > 0; --y ){
                 let tr = document.createElement("tr");
 
                 for( let x = 0; x < 10; ++x ){
@@ -69,11 +74,11 @@
                     let td = document.createElement("td");
 
                     if( x == 0 || x == 9 ){
-                        td.style.cssText = `width: ${halfCellSize}px; height: ${cellSize}px; border: 1px solid black; background-color: ${Mat1Coup.INFOS_CELL}"`;
+                        td.style.cssText = `width: ${halfCellSize}px; height: ${cellSize}px; border: 1px solid black; background-color: ${Mat1Coup.INFOS_CELL}; font-size: ${halfCellSize-5}px;"`;
                         td.innerHTML = `<div class="takeAllPlace"><div class="centerMe">${y}</div></div>`;
                     }
                     else{
-                        td.style.cssText = `cursor: pointer; width: ${cellSize}px; height: ${cellSize}px; border: 1px solid black; background-color: ${ ((x+y) % 2 == 0) ? Mat1Coup.WHITE_CELL : Mat1Coup.BLACK_CELL};`;
+                        td.style.cssText = `cursor: pointer; width: ${cellSize}px; height: ${cellSize}px; border: 1px solid black; background-color: ${ ((x+y) % 2 == 0) ? Mat1Coup.WHITE_CELL : Mat1Coup.BLACK_CELL};  font-size: ${cellSize-11}px;`;
                         td.id = `${this.columnIndexToChar(x-1)}${y}`;
                         td.addEventListener("click", (e) => this.onClickCell(td, x, y) );
                     }
@@ -96,13 +101,13 @@
             let halfCellSize = Math.floor( cellSize / 2);
 
             for( let i = 0; i < 10; ++i ){
-                let td = document.createElement("th");
+                let td = document.createElement("td");
 
                 if( i == 0 || i == 9 ) {
                     td.style.cssText = `"width: ${halfCellSize}px; height: ${halfCellSize}px;"`;
                 }
                 else {
-                    td.style.cssText = `width: ${cellSize}px; height: ${halfCellSize}px; border: 1px solid black; background-color: ${Mat1Coup.INFOS_CELL}"`;
+                    td.style.cssText = `width: ${cellSize}px; height: ${halfCellSize}px; font-size: ${halfCellSize-5}px; border: 1px solid black; background-color: ${Mat1Coup.INFOS_CELL};"`;
                     td.innerText = this.columnIndexToChar(i-1);
                 }
 
@@ -127,7 +132,12 @@
                 this.selectCell = null;
             }
             else{
-                console.warn("TODO: compare result");
+                if( this.result.from == this.selectCell.id && this.result.to == element.id ){
+                    console.log("Yeah !!");
+                }
+                else{
+                    console.log("Fail...");
+                }   
 
                 this.removeSelectStyle();
                 this.selectCell = null;
@@ -136,19 +146,49 @@
 
         applySelectStyle(){
             let div = document.createElement("div");
-            div.classList.add("takeAllPlace");
-            div.style.background = "radial-gradient(circle, rgba(255,255,255,0) 40%, rgba(50, 50, 255, 1) 100%)";
-            // div.style.cssText = `width: 100%; height: 100%; background: radial-gradient(circle, rgba(255,255,255,0) 40%, rgba(50, 50, 255, 1) 100%); position: absolute: top: 0; left: 0; float: left;`;
+            div.classList.add("selection");
 
             this.selectCell.append(div);
         }
 
         removeSelectStyle(){
-            this.selectCell.innerHTML = "";
+            Array.from( document.getElementsByClassName("selection") ).forEach( (e) => e.remove() );
+        }
+
+        placePieces(positions){
+            ["white", "black"].forEach( color => {
+                Object.keys(positions[color]).forEach( (p) => {
+
+                    document.getElementById(positions[color][p]).innerHTML = `<div class="takeAllPlace">${color == "white" ? Mat1Coup.WHITE_PIECES[p] : Mat1Coup.BLACK_PIECES[p] }</div>`;
+
+                });
+            });
+        }
+
+        destroy(){
+            this.container.innerHTML = "";
         }
 
     }
 
-    var mat = new Mat1Coup("container");
+    var start_position = {
+            black:{
+                K: "G7",
+                R: "H8",
+                B: "F8"
+            },
+            white:{
+                K: "G2",
+                Q: "H5",
+                P: "F5"
+            }
+        };
+
+    var result = {
+        from: "H5",
+        to: "G6"
+    }
+
+    var mat = new Mat1Coup("container", start_position, result);
 
 </script>
