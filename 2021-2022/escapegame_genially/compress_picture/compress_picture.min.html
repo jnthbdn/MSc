@@ -1,0 +1,20 @@
+<div id="grid-container" style="width: 100%; height: 100%;"></div>
+
+<script>
+    class CompressImage{static UNCHECK_COLOR="white";static CHECK_COLOR="black";static CONTAINER_ID="grid-container";static SHOW_ON_SUCCESS_ID="80d71053f614439c8b79e0076ffdcba4";constructor(e,t){this.grid_size=e.length,this.results=e,this.create_grid(t)}create_grid(e){let t,s,r=document.createElement("table"),i=document.getElementById(CompressImage.CONTAINER_ID);e?(s=Math.floor(Math.min(i.clientWidth/(this.grid_size+1.5),i.clientHeight/this.grid_size)),t=this.generate_infos()):(s=Math.floor(Math.min(i.clientWidth/this.grid_size,i.clientHeight/this.grid_size)),t=null),i.innerHTML="",i.append(r),r.style.cssText="border-collapse: collapse; max-width: 100%; max-height: 100%;";for(let i=0;i<this.grid_size;++i){let o=document.createElement("tr");r.append(o);for(let e=0;e<this.grid_size;++e){let t=document.createElement("td");o.append(t),t.id=`cell_${e}_${i}`,t.style.cssText=`width: ${s}px; height: ${s}px; border: 1px solid black; background-color: ${CompressImage.UNCHECK_COLOR};`,t.addEventListener("click",(e=>this.toggle_cell_color(t)))}if(e){let e=document.createElement("td");o.append(e),e.style.cssText=`width: ${1.5*s}px; overflow: hidden; height: ${s}px; border: 1px solid black; font-size: ${s/2}px`,e.innerHTML=t[i]}}}toggle_cell_color(e){e.style.backgroundColor=e.style.backgroundColor==CompressImage.UNCHECK_COLOR?CompressImage.CHECK_COLOR:CompressImage.UNCHECK_COLOR,this.check_grid()}check_grid(){let e=[],t=!0;for(let s=0;s<this.grid_size;++s){e=[0],t=!0;for(let r=0;r<this.grid_size;++r){document.getElementById(`cell_${r}_${s}`).style.backgroundColor==CompressImage.UNCHECK_COLOR?t?e[e.length-1]++:(e.push(1),t=!0):t?(e.push(1),t=!1):e[e.length-1]++}if(t&&e.length>1&&e.splice(-1,1),!this.isArraysEquals(e,this.results[s]))return}this.showOnSuccess()}isArraysEquals(e,t){return JSON.stringify(e)===JSON.stringify(t)}generate_infos(){let e=[];return this.results.forEach((t=>{let s="",r=!0;t.forEach((e=>{s+='<span style="border: 1px solid black;',s+=r?`background-color: ${CompressImage.UNCHECK_COLOR}; color: ${CompressImage.CHECK_COLOR};">`:`background-color: ${CompressImage.CHECK_COLOR}; color: ${CompressImage.UNCHECK_COLOR};">`,s+=`${e}</span>`,r=!r})),e.push(s)})),e}showOnSuccess(){try{document.getElementById(CompressImage.SHOW_ON_SUCCESS_ID).parentNode.parentNode.parentNode.parentNode.parentNode.style.display="block"}catch{}}}
+
+    let puzzle = 
+    {
+        show_numbers_column: true,
+        
+        result: [
+            [1, 1, 1, 1],
+            [1, 1, 1, 1],
+            [5],
+            [0, 1, 3, 1],
+            [1, 3]
+        ]
+    };
+
+    var grid = new CompressImage(puzzle.result, puzzle.show_numbers_column);
+</script>
