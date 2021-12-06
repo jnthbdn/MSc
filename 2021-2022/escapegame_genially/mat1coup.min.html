@@ -1,0 +1,115 @@
+<div id="container" style="width:100%;height:100%"></div><div id="overlay" style="width:100%;height:100%;background-color:#00000080;z-index:9999999;display:none;position:absolute;top:0;left:0"><div class="takeAllPlace"><div class="centerMe" style="display:inline-block;padding:8px;background-color:#fff;border:1px solid #000;border-radius:10px"><h1 id="overlayTitle">TITLE</h1><p id="overlayText">texte</p><p style="text-align:right"><button id="overlayButton" style="border:1px solid #000;border-radius:4px">Button</button></p></div></div></div>
+<style>#chessboard tr td, #chessboard tr th{padding: 0;margin: 0;vertical-align: middle;text-align: center;position: relative}.takeAllPlace, #chessboard .selection{width: 100%;height: 100%;position: absolute;top: 0;left: 0}.selection{background: radial-gradient(circle, rgba(255,255,255,0) 40%, rgba(50, 50, 255, 1) 100%)}.centerMe{position: relative;top: 50%;left: 50%;transform: translate(-50%, -50%)}</style>
+
+<script>
+    class Mat1Coup{static BLACK_CELL="#AAAAAA";static WHITE_CELL="#FFFFFF";static BLACK_CELL_HOVER="#222255";static WHITE_CELL_HOVER="#AAAAFF";static INFOS_CELL="#FFFFFF";static WHITE_PIECES={K:"&#9812;",Q:"&#9813;",R:"&#9814;",B:"&#9815;",N:"&#9816;",P:"&#9817;"};static BLACK_PIECES={K:"&#9818;",Q:"&#9819;",R:"&#9820;",B:"&#9821;",N:"&#9822;",P:"&#9823;"};static OVERLAY_ID="overlay";static OVERLAY_TITLE_ID="overlayTitle";static OVERLAY_TEXT_ID="overlayText";static OVERLAY_BUTTON_ID="overlayButton";constructor(t,e,l){let i=document.getElementById("container"),s=Math.floor(Math.min(i.clientHeight,i.clientWidth)/9);this.onSuccesButtonClick=e||null,this.onFailureButtonClick=l||null,this.activeButtonCallback=null,this.selectCell=null,this.result=t.result,this.texts=t.texts,this.container=i,this.createGrid(s),this.placePieces(t.positions),this.configureOverlay()}createGrid(t){let e=Math.floor(t/2),l=document.createElement("table");l.style.cssText="border-collapse: collapse; text-align: center;",l.id="chessboard",this.crearteGridLetter(l,t);for(let i=8;i>0;--i){let s=document.createElement("tr");for(let l=0;l<10;++l){let n=document.createElement("td");0==l||9==l?(n.style.cssText=`width: ${e}px; height: ${t}px; border: 1px solid black; background-color: ${Mat1Coup.INFOS_CELL}; font-size: ${e-5}px;"`,n.innerHTML=`<div class="takeAllPlace"><div class="centerMe">${i}</div></div>`):(n.style.cssText=`cursor: pointer; width: ${t}px; height: ${t}px; border: 1px solid black; background-color: ${(l+i)%2==0?Mat1Coup.WHITE_CELL:Mat1Coup.BLACK_CELL};  font-size: ${t-11}px;`,n.id=`${this.columnIndexToChar(l-1)}${i}`,n.addEventListener("click",(t=>this.onClickCell(n,l,i)))),s.append(n)}l.append(s)}this.crearteGridLetter(l,t),container.innerHTML="",container.append(l)}crearteGridLetter(t,e){let l=document.createElement("tr"),i=Math.floor(e/2);for(let t=0;t<10;++t){let s=document.createElement("td");0==t||9==t?s.style.cssText=`"width: ${i}px; height: ${i}px;"`:(s.style.cssText=`width: ${e}px; height: ${i}px; font-size: ${i-5}px; border: 1px solid black; background-color: ${Mat1Coup.INFOS_CELL};"`,s.innerText=this.columnIndexToChar(t-1)),l.append(s)}t.append(l)}columnIndexToChar(t){return String.fromCharCode("A".charCodeAt(0)+t)}onClickCell(t,e,l){null==this.selectCell?(this.selectCell=t,this.applySelectStyle()):this.selectCell.id==t.id?(this.removeSelectStyle(),this.selectCell=null):(this.result.from==this.selectCell.id&&this.result.to==t.id?this.showOverlay(!0):this.showOverlay(!1),this.removeSelectStyle(),this.selectCell=null)}applySelectStyle(){let t=document.createElement("div");t.classList.add("selection"),this.selectCell.append(t)}removeSelectStyle(){Array.from(document.getElementsByClassName("selection")).forEach((t=>t.remove()))}placePieces(t){["white","black"].forEach((e=>{Object.keys(t[e]).forEach((l=>{let i=`<div class="takeAllPlace">${"white"==e?Mat1Coup.WHITE_PIECES[l]:Mat1Coup.BLACK_PIECES[l]}</div>`;t[e][l]instanceof Array?t[e][l].forEach((t=>{document.getElementById(t).innerHTML=i})):document.getElementById(t[e][l]).innerHTML=i}))}))}configureOverlay(){document.getElementById(Mat1Coup.OVERLAY_BUTTON_ID).addEventListener("click",(()=>this.onClickOverlayButton()))}onClickOverlayButton(){null!=this.activeButtonCallback&&this.activeButtonCallback()}showOverlay(t){let e=document.getElementById(Mat1Coup.OVERLAY_ID),l=document.getElementById(Mat1Coup.OVERLAY_TITLE_ID),i=document.getElementById(Mat1Coup.OVERLAY_TEXT_ID),s=document.getElementById(Mat1Coup.OVERLAY_BUTTON_ID);t?(l.innerHTML=this.texts.success.title,i.innerHTML=this.texts.success.text,null==this.texts.success.button?s.style.display="none":(s.display="inline",s.innerHTML=this.texts.success.button,this.activeButtonCallback=this.onSuccesButtonClick)):(l.innerHTML=this.texts.failure.title,i.innerHTML=this.texts.failure.text,s.innerHTML=this.texts.failure.button,s.style.display="inline",this.activeButtonCallback=this.onFailureButtonClick),e.style.display="block"}closeOverlay(){let t=document.getElementById(Mat1Coup.OVERLAY_ID);document.getElementById(Mat1Coup.OVERLAY_BUTTON_ID);t.style.display="none",this.activeButtonCallback=null}destroy(){this.closeOverlay(),this.container.innerHTML=""}}
+
+    var game_settings = [
+        {
+            positions: {
+                black:{
+                    K: "G7",
+                    R: "H8",
+                    B: "F8"
+                },
+                white:{
+                    K: "G2",
+                    Q: "H5",
+                    P: "F5"
+                }
+            },
+            result: {
+                from: "H5",
+                to: "G6"
+            },
+            texts:{
+                success: {
+                    title: "YOU WIN",
+                    text: "Congrats !<br/>The code is : AAA",
+                    button: "Next Level"
+                },
+
+                failure: {
+                    title: "YOU LOSE",
+                    text: "Maybe retry !",
+                    button: "Retry !"
+                }
+            }
+        },
+        {
+            positions: {
+                black:{
+                    K: "G7",
+                    Q: "D6"
+                },
+                white:{
+                    K: "G1",
+                    R: ["H1", "F1"]
+                }
+            },
+            result: {
+                from: "D6",
+                to: "G3"
+            },
+            texts:{
+                success: {
+                    title: "YOU WIN",
+                    text: "Congrats !<br/>The code is : BBB",
+                    button: "Next Level"
+                },
+
+                failure: {
+                    title: "YOU LOSE",
+                    text: "Maybe retry !",
+                    button: "Retry !"
+                }
+            }
+        },
+        {
+            positions: {
+                black:{
+                    K: "G7",
+                    Q: "F5",
+                    R: "D2"
+                },
+                white:{
+                    K: "B3",
+                    P: ["A3", "B4"]
+                }
+            },
+            result: {
+                from: "F5",
+                to: "C2"
+            },
+            texts:{
+                success: {
+                    title: "YOU WIN",
+                    text: "Congrats !<br/>The code is : CCC",
+                    button: null
+                },
+
+                failure: {
+                    title: "YOU LOSE",
+                    text: "Maybe retry !",
+                    button: "Retry !"
+                }
+            }
+        }
+    ];
+
+    
+    function onSuccess() {
+        level++;
+        mat.destroy();
+        mat = new Mat1Coup(game_settings[level], onSuccess, onFailure);
+    }
+
+    function onFailure() {
+        mat.closeOverlay();
+    }
+
+    var level = 0;
+    var mat = new Mat1Coup(game_settings[level], onSuccess, onFailure);
+
+
+</script>
