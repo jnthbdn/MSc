@@ -350,7 +350,6 @@
     function onSuccess() {
         level++;
         mat.destroy();
-        console.log(game_settings[level]);
         mat = new Mat1Coup(game_settings[level], onSuccess, onFailure);
     }
 
