@@ -1,0 +1,39 @@
+<div id="grid-container" style="width:100%;height:100%"></div><div id="overlay" style="width:100%;height:100%;background-color:#00000080;z-index:9999999;display:none;position:absolute;top:0;left:0"></div>
+
+<script>
+    class CompressImage{static UNCHECK_COLOR="white";static CHECK_COLOR="black";constructor(e,t,s){this.grid_size=e,this.results=t,this.create_grid(s)}create_grid(e){let t=document.createElement("table"),s=this.generate_infos(),r=document.getElementById(e),l=Math.floor(Math.min(r.clientWidth/(this.grid_size+1.5),r.clientHeight/this.grid_size));r.innerHTML="",r.append(t),t.style.cssText="border-collapse: collapse; max-width: 100%; max-height: 100%;";for(let e=0;e<this.grid_size;++e){let r=document.createElement("tr");t.append(r);for(let t=0;t<this.grid_size;++t){let s=document.createElement("td");r.append(s),s.id=`cell_${t}_${e}`,s.style.cssText=`width: ${l}px; height: ${l}px; border: 1px solid black; background-color: ${CompressImage.UNCHECK_COLOR};`,s.addEventListener("click",(e=>this.toggle_cell_color(s)))}let o=document.createElement("td");r.append(o),o.style.cssText=`width: ${1.5*l}px; overflow: hidden; height: ${l}px; border: 1px solid black; font-size: ${l/2}px`,o.innerHTML=s[e]}}toggle_cell_color(e){e.style.backgroundColor=e.style.backgroundColor==CompressImage.UNCHECK_COLOR?CompressImage.CHECK_COLOR:CompressImage.UNCHECK_COLOR,this.check_grid()}check_grid(){let e=[],t=!0;for(let s=0;s<this.grid_size;++s){e=[0],t=!0;for(let r=0;r<this.grid_size;++r){document.getElementById(`cell_${r}_${s}`).style.backgroundColor==CompressImage.UNCHECK_COLOR?t?e[e.length-1]++:(e.push(1),t=!0):t?(e.push(1),t=!1):e[e.length-1]++}if(t&&e.length>1&&e.splice(-1,1),!this.isArraysEquals(e,this.results[s]))return}document.getElementById("overlay").style.display="block",alert("You won !")}isArraysEquals(e,t){return JSON.stringify(e)===JSON.stringify(t)}generate_infos(){let e=[];return this.results.forEach((t=>{let s="",r=!0;t.forEach((e=>{s+='<span style="border: 1px solid black;',s+=r?`background-color: ${CompressImage.UNCHECK_COLOR}; color: ${CompressImage.CHECK_COLOR};">`:`background-color: ${CompressImage.CHECK_COLOR}; color: ${CompressImage.UNCHECK_COLOR};">`,s+=`${e}</span>`,r=!r})),e.push(s)})),e}}
+
+    let puzzles = [
+        [
+            [2, 3],
+            [1, 4],
+            [2,1, 1, 1],
+            [0, 3],
+            [1, 1, 1, 1]
+        ],
+        [
+            [1, 2, 1, 1],
+            [2, 3],
+            [1, 1, 1, 1],
+            [0, 3, 1, 1],
+            [0, 2, 2, 1]
+        ],
+        [
+            [0, 5],
+            [4, 1],
+            [1, 1, 2, 1],
+            [2, 3],
+            [3, 2]
+        ]
+    ];
+
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
+
+
+    var random_puzzle = puzzles[getRandomInt(puzzles.length)];
+    var grid = new CompressImage(random_puzzle.length, random_puzzle, "grid-container");
+
+
+</script>
