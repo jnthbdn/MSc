@@ -2,10 +2,10 @@
 </div>
 <div id="overlay" style="width: 100%; height: 100%; background-color: #00000080; z-index: 9999999; display: none; position: absolute; top: 0; left: 0;">
     <div class="takeAllPlace">
-        <div class="centerMe" style="display: inline-block; padding: 8px; background-color: white; border: 1px solid black; border-radius: 10px;">
+        <div class="centerMe" style="display: inline-block; padding: 16px; background-color: white; border: 1px solid black; border-radius: 10px; max-width: 90%; max-height: 90%;">
             <h1 id="overlayTitle">TITLE</h1>
             <p id="overlayText">texte</p>
-            <p style="text-align: right;"><button id="overlayButton" style="border: 1px solid black; border-radius: 4px;">Button</button></p>
+            <p style="text-align: right;"><button id="overlayButton" style="border: 1px solid black; border-radius: 4px; padding: 8px;">Button</button></p>
         </div>
     </div>
 </div>
@@ -42,24 +42,27 @@
 <script>
 
     class Mat1Coup {
+        // COLOR SETTINGS
         static BLACK_CELL = "#AAAAAA";
         static WHITE_CELL = "#FFFFFF";
-        static BLACK_CELL_HOVER = "#222255";
-        static WHITE_CELL_HOVER = "#AAAAFF";
         static INFOS_CELL = "#FFFFFF";
 
+        // PIECES SETTINGS
         static WHITE_PIECES = { "K": "&#9812;", "Q": "&#9813;", "R": "&#9814;", "B": "&#9815;", "N": "&#9816;", "P": "&#9817;" };
         static BLACK_PIECES = { "K": "&#9818;", "Q": "&#9819;", "R": "&#9820;", "B": "&#9821;", "N": "&#9822;", "P": "&#9823;" };
 
-
+        // HTML ID SETTINGS
+        static CONTAINER_ID = "container";
         static OVERLAY_ID = "overlay";
         static OVERLAY_TITLE_ID = "overlayTitle";
         static OVERLAY_TEXT_ID = "overlayText";
         static OVERLAY_BUTTON_ID = "overlayButton";
+        static SHOW_ON_SUCCESS_ID = "44a09a07e0f941eeba034836fbc6775b";
+        static SHOW_ON_FAILURE_ID = "eafd7fd27a4341cabe6616034154cb30";
 
 
         constructor(gameSettings, onSuccesButtonClick, onFailureButtonClick){
-            let container = document.getElementById("container");
+            let container = document.getElementById(Mat1Coup.CONTAINER_ID);
             let cellSize = Math.floor( Math.min( container.clientHeight, container.clientWidth ) / 9 );
 
             this.onSuccesButtonClick = onSuccesButtonClick || null;
@@ -219,6 +222,7 @@
 
                 if( this.texts["success"]["button"] == null ){
                     overlayButton.style.display = "none";
+                    this.showOnSuccess();
                 }
                 else{
                     overlayButton.display = "inline";
@@ -232,6 +236,7 @@
                 overlayButton.innerHTML = this.texts["failure"]["button"];
                 overlayButton.style.display = "inline";
                 this.activeButtonCallback = this.onFailureButtonClick;
+                this.showOnFailure();
             }
 
             overlay.style.display = "block";
@@ -245,10 +250,24 @@
             this.activeButtonCallback = null;
         }
 
-
         destroy(){
             this.closeOverlay();
             this.container.innerHTML = "";
+        }
+
+
+        showOnSuccess(){
+            try{
+                document.getElementById(Mat1Coup.SHOW_ON_SUCCESS_ID).parentNode.parentNode.parentNode.parentNode.parentNode.style.display = "block";
+            }
+            catch{}
+        }
+
+        showOnFailure(){
+            try{
+                document.getElementById(Mat1Coup.SHOW_ON_FAILURE_ID).parentNode.parentNode.parentNode.parentNode.parentNode.style.display = "block";
+            }
+            catch{}
         }
 
     }
@@ -347,18 +366,8 @@
     ];
 
     
-    function onSuccess() {
-        level++;
-        mat.destroy();
-        mat = new Mat1Coup(game_settings[level], onSuccess, onFailure);
-    }
-
-    function onFailure() {
-        mat.closeOverlay();
-    }
-
+    function onSuccess() { level++; mat.destroy(); mat = new Mat1Coup(game_settings[level], onSuccess, onFailure); }
+    function onFailure() { mat.closeOverlay(); }
     var level = 0;
     var mat = new Mat1Coup(game_settings[level], onSuccess, onFailure);
-
-
 </script>

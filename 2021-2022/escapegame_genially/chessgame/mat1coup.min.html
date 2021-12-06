@@ -1,0 +1,107 @@
+<div id="container" style="width: 100%; height: 100%;"></div><div id="overlay" style="width: 100%; height: 100%; background-color: #00000080; z-index: 9999999; display: none; position: absolute; top: 0; left: 0;"><div class="takeAllPlace"><div class="centerMe" style="display: inline-block; padding: 16px; background-color: white; border: 1px solid black; border-radius: 10px; max-width: 90%; max-height: 90%;"><h1 id="overlayTitle">TITLE</h1><p id="overlayText">texte</p><p style="text-align: right;"><button id="overlayButton" style="border: 1px solid black; border-radius: 4px; padding: 8px;">Button</button></p></div></div></div>
+
+<style>#chessboard tr td, #chessboard tr th {padding: 0;margin: 0;vertical-align: middle;text-align: center;position: relative;}.takeAllPlace, #chessboard .selection {width: 100%;height: 100%;position: absolute;top: 0;left: 0;}.selection {background: radial-gradient(circle, rgba(255,255,255,0) 40%, rgba(50, 50, 255, 1) 100%);}.centerMe {position: relative;top: 50%;left: 50%;transform: translate(-50%, -50%);}</style>
+
+<script>
+
+    class Mat1Coup{static BLACK_CELL="#AAAAAA";static WHITE_CELL="#FFFFFF";static INFOS_CELL="#FFFFFF";static WHITE_PIECES={K:"&#9812;",Q:"&#9813;",R:"&#9814;",B:"&#9815;",N:"&#9816;",P:"&#9817;"};static BLACK_PIECES={K:"&#9818;",Q:"&#9819;",R:"&#9820;",B:"&#9821;",N:"&#9822;",P:"&#9823;"};static CONTAINER_ID="container";static OVERLAY_ID="overlay";static OVERLAY_TITLE_ID="overlayTitle";static OVERLAY_TEXT_ID="overlayText";static OVERLAY_BUTTON_ID="overlayButton";static SHOW_ON_SUCCESS_ID="44a09a07e0f941eeba034836fbc6775b";static SHOW_ON_FAILURE_ID="eafd7fd27a4341cabe6616034154cb30";constructor(e,t,l){let s=document.getElementById(Mat1Coup.CONTAINER_ID),i=Math.floor(Math.min(s.clientHeight,s.clientWidth)/9);this.onSuccesButtonClick=t||null,this.onFailureButtonClick=l||null,this.activeButtonCallback=null,this.selectCell=null,this.result=e.result,this.texts=e.texts,this.container=s,this.createGrid(i),this.placePieces(e.positions),this.configureOverlay()}createGrid(e){let t=Math.floor(e/2),l=document.createElement("table");l.style.cssText="border-collapse: collapse; text-align: center;",l.id="chessboard",this.crearteGridLetter(l,e);for(let s=8;s>0;--s){let i=document.createElement("tr");for(let l=0;l<10;++l){let n=document.createElement("td");0==l||9==l?(n.style.cssText=`width: ${t}px; height: ${e}px; border: 1px solid black; background-color: ${Mat1Coup.INFOS_CELL}; font-size: ${t-5}px;"`,n.innerHTML=`<div class="takeAllPlace"><div class="centerMe">${s}</div></div>`):(n.style.cssText=`cursor: pointer; width: ${e}px; height: ${e}px; border: 1px solid black; background-color: ${(l+s)%2==0?Mat1Coup.WHITE_CELL:Mat1Coup.BLACK_CELL};  font-size: ${e-11}px;`,n.id=`${this.columnIndexToChar(l-1)}${s}`,n.addEventListener("click",(e=>this.onClickCell(n,l,s)))),i.append(n)}l.append(i)}this.crearteGridLetter(l,e),container.innerHTML="",container.append(l)}crearteGridLetter(e,t){let l=document.createElement("tr"),s=Math.floor(t/2);for(let e=0;e<10;++e){let i=document.createElement("td");0==e||9==e?i.style.cssText=`"width: ${s}px; height: ${s}px;"`:(i.style.cssText=`width: ${t}px; height: ${s}px; font-size: ${s-5}px; border: 1px solid black; background-color: ${Mat1Coup.INFOS_CELL};"`,i.innerText=this.columnIndexToChar(e-1)),l.append(i)}e.append(l)}columnIndexToChar(e){return String.fromCharCode("A".charCodeAt(0)+e)}onClickCell(e,t,l){null==this.selectCell?(this.selectCell=e,this.applySelectStyle()):this.selectCell.id==e.id?(this.removeSelectStyle(),this.selectCell=null):(this.result.from==this.selectCell.id&&this.result.to==e.id?this.showOverlay(!0):this.showOverlay(!1),this.removeSelectStyle(),this.selectCell=null)}applySelectStyle(){let e=document.createElement("div");e.classList.add("selection"),this.selectCell.append(e)}removeSelectStyle(){Array.from(document.getElementsByClassName("selection")).forEach((e=>e.remove()))}placePieces(e){["white","black"].forEach((t=>{Object.keys(e[t]).forEach((l=>{let s=`<div class="takeAllPlace">${"white"==t?Mat1Coup.WHITE_PIECES[l]:Mat1Coup.BLACK_PIECES[l]}</div>`;e[t][l]instanceof Array?e[t][l].forEach((e=>{document.getElementById(e).innerHTML=s})):document.getElementById(e[t][l]).innerHTML=s}))}))}configureOverlay(){document.getElementById(Mat1Coup.OVERLAY_BUTTON_ID).addEventListener("click",(()=>this.onClickOverlayButton()))}onClickOverlayButton(){null!=this.activeButtonCallback&&this.activeButtonCallback()}showOverlay(e){let t=document.getElementById(Mat1Coup.OVERLAY_ID),l=document.getElementById(Mat1Coup.OVERLAY_TITLE_ID),s=document.getElementById(Mat1Coup.OVERLAY_TEXT_ID),i=document.getElementById(Mat1Coup.OVERLAY_BUTTON_ID);e?(l.innerHTML=this.texts.success.title,s.innerHTML=this.texts.success.text,null==this.texts.success.button?(i.style.display="none",this.showOnSuccess()):(i.display="inline",i.innerHTML=this.texts.success.button,this.activeButtonCallback=this.onSuccesButtonClick)):(l.innerHTML=this.texts.failure.title,s.innerHTML=this.texts.failure.text,i.innerHTML=this.texts.failure.button,i.style.display="inline",this.activeButtonCallback=this.onFailureButtonClick,this.showOnFailure()),t.style.display="block"}closeOverlay(){let e=document.getElementById(Mat1Coup.OVERLAY_ID);document.getElementById(Mat1Coup.OVERLAY_BUTTON_ID);e.style.display="none",this.activeButtonCallback=null}destroy(){this.closeOverlay(),this.container.innerHTML=""}showOnSuccess(){try{document.getElementById(Mat1Coup.SHOW_ON_SUCCESS_ID).parentNode.parentNode.parentNode.parentNode.parentNode.style.display="block"}catch{}}showOnFailure(){try{document.getElementById(Mat1Coup.SHOW_ON_FAILURE_ID).parentNode.parentNode.parentNode.parentNode.parentNode.style.display="block"}catch{}}}
+
+    var game_settings = [
+        {
+            positions: {
+                black:{
+                    K: "G7",
+                    R: "H8",
+                    B: "F8"
+                },
+                white:{
+                    K: "G2",
+                    Q: "H5",
+                    P: "F5"
+                }
+            },
+            result: {
+                from: "H5",
+                to: "G6"
+            },
+            texts:{
+                success: {
+                    title: "YOU WIN",
+                    text: "Congrats !<br/>The code is : AAA",
+                    button: "Next Level"
+                },
+
+                failure: {
+                    title: "YOU LOSE",
+                    text: "Maybe retry !",
+                    button: "Retry !"
+                }
+            }
+        },
+        {
+            positions: {
+                black:{
+                    K: "G7",
+                    Q: "D6"
+                },
+                white:{
+                    K: "G1",
+                    R: ["H1", "F1"]
+                }
+            },
+            result: {
+                from: "D6",
+                to: "G3"
+            },
+            texts:{
+                success: {
+                    title: "YOU WIN",
+                    text: "Congrats !<br/>The code is : BBB",
+                    button: "Next Level"
+                },
+
+                failure: {
+                    title: "YOU LOSE",
+                    text: "Maybe retry !",
+                    button: "Retry !"
+                }
+            }
+        },
+        {
+            positions: {
+                black:{
+                    K: "G7",
+                    Q: "F5",
+                    R: "D2"
+                },
+                white:{
+                    K: "B3",
+                    P: ["A3", "B4"]
+                }
+            },
+            result: {
+                from: "F5",
+                to: "C2"
+            },
+            texts:{
+                success: {
+                    title: "YOU WIN",
+                    text: "Congrats !<br/>The code is : CCC",
+                    button: null
+                },
+
+                failure: {
+                    title: "YOU LOSE",
+                    text: "Maybe retry !",
+                    button: "Retry !"
+                }
+            }
+        }
+    ];
+
+    
+    function onSuccess() { level++; mat.destroy(); mat = new Mat1Coup(game_settings[level], onSuccess, onFailure); }
+    function onFailure() { mat.closeOverlay(); }
+    var level = 0;
+    var mat = new Mat1Coup(game_settings[level], onSuccess, onFailure);
+</script>
