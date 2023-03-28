@@ -1,54 +1,52 @@
 <html>
-
     <head>
-        
         <title>Magic Peace Grid</title>
 
-        <script type='text/javascript'>
+        <script type="text/javascript">
 
             games = [
                 {
                     is_icon: true,
                     rows: [
-                        '101011',
-                        '000000',
-                        '000000',
-                        '100010',
-                        '110110',
-                        '111111',
+                        "101011",
+                        "000000",
+                        "000000",
+                        "100010",
+                        "110110",
+                        "111111",
                     ]
                 },
                 {
                     is_icon: true,
                     rows: [
-                        '101011',
-                        '101011',
-                        '111111',
-                        '011100',
-                        '100010',
-                        '011001',
+                        "101011",
+                        "101011",
+                        "111111",
+                        "011100",
+                        "100010",
+                        "011001",
                     ]
                 },
                 {
                     is_icon: false,
                     rows: [
-                        'U_N__0',
-                        '_P___1',
-                        'L_U__0',
-                        '_G__G0',
-                        'E__D_0',
-                        '100111',
+                        "U_N__0",
+                        "_P___1",
+                        "L_U__0",
+                        "_G__G0",
+                        "E__D_0",
+                        "100111",
                     ]
                 },
                 {
                     is_icon: false,
                     rows: [
-                        '_H_EL1',
-                        'L____1',
-                        '__O_W0',
-                        '_R_L_0',
-                        '__D__1',
-                        '100001',
+                        "_H_EL1",
+                        "L____1",
+                        "__O_W0",
+                        "_R_L_0",
+                        "__D__1",
+                        "100001",
                     ]
                 }
             ]
@@ -58,34 +56,34 @@
             function newGame(){
                 var body = document.body;
                 var round = games[current_game];
-                var table = document.createElement('table');
+                var table = document.createElement("table");
 
-                body.innerHTML = '';
+                body.innerHTML = "";
 
                 if( round == undefined ){
-                    body.innerHTML = '<div id=\'end\'><h1>Well done!</h1><p>You have corrected all the grids!</p></div>';
+                    body.innerHTML = "<div id=\"end\"><h1>Well done!</h1><p>You have corrected all the grids!</p></div>";
                     return;
                 }
 
                 for(var current_row=0; current_row < 6; current_row++){
-                    var row = document.createElement('tr');
+                    var row = document.createElement("tr");
 
                     for (let current_col = 0; current_col < 6; current_col++) {
                         var cell_value = round.rows[current_row][current_col]
-                        var cell = document.createElement('td');
-                        cell.classList.add('cell');
+                        var cell = document.createElement("td");
+                        cell.classList.add("cell");
 
-                        if( cell_value == '0' ){
-                            cell.classList.add('black_cell');
+                        if( cell_value == "0" ){
+                            cell.classList.add("black_cell");
                         }
 
                         if( !round.is_icon ){
-                            if(  cell_value == '_' ){
+                            if(  cell_value == "_" ){
                                 cell.innerHTML = randomLetter();
-                                cell.classList.add('black_cell');
+                                cell.classList.add("black_cell");
                             }
-                            else if( cell_value == '0' || cell_value == '1' ){
-                                cell.innerHTML = '&nbsp;';
+                            else if( cell_value == "0" || cell_value == "1" ){
+                                cell.innerHTML = "&nbsp;";
                             }
                             else{
                                 cell.innerHTML = cell_value;
@@ -93,9 +91,9 @@
                         }
 
                         if( current_col < 5 && current_row < 5 ){
-                            cell.style.cursor = 'pointer';
+                            cell.style.cursor = "pointer";
                 
-                            cell.addEventListener('click', function(){
+                            cell.addEventListener("click", function(){
                                 flipCell(this);
                             });
                         }
@@ -115,19 +113,20 @@
             }
 
             function flipCell(cell){
-                if( cell.classList.contains('black_cell') ){
-                    cell.classList.remove('black_cell');
+                if( cell.classList.contains("black_cell") ){
+                    cell.classList.remove("black_cell");
                 }
                 else{
-                    cell.classList.add('black_cell');
+                    cell.classList.add("black_cell");
                 }
 
                 setTimeout( () => {
                     if( checkResult() ){
-                        alert('You win !\n');
+                        //alert("You win !\n");
+                        showPopUp("You Win !");
 
                         current_game++;
-                        newGame();
+                        // newGame();
                     }
                 }, 50)
             }
@@ -141,10 +140,10 @@
                 for(var current_row=0; current_row < 5; current_row++){
                     for (let current_col = 0; current_col < 5; current_col++) {
                         var expect_value = round.rows[current_row][current_col];
-                        var cell_value = table.children[current_row].children[current_col].classList.contains('black_cell') ? '0' : '1';
+                        var cell_value = table.children[current_row].children[current_col].classList.contains("black_cell") ? "0" : "1";
 
                         if( !round.is_icon ){
-                            expect_value = expect_value == '_' ? '0' : '1';
+                            expect_value = expect_value == "_" ? "0" : "1";
                         }
 
                         if( expect_value != cell_value ){
@@ -157,13 +156,34 @@
             }
 
             function randomLetter(){
-                var letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
                 return letters[randomInt(26)];
             }
 
             // Return a int between [0, max[
             function randomInt(max){
                 return Math.floor(Math.random() * max);
+            }
+
+            function showPopUp(html){
+                var popup = document.createElement("div");
+                popup.id = "overlay";
+
+                var content = document.createElement("div");
+                content.id = "popup";
+
+                content.innerHTML = html + `<br /><br /><div style="text-align: center"><button onclick="closePopup()">Ok</button></div>`;
+
+
+                popup.append(content);
+                document.body.append(popup);
+            }
+
+            function closePopup( onclose ){
+                document.getElementById("popup").remove();
+                document.getElementById("overlay").remove();
+
+                newGame();
             }
         </script>
 
@@ -174,7 +194,7 @@
 
             body{
                 margin: 0;
-                padding: 2px;
+                padding: 0;
                 background-color: white;
             }
 
@@ -218,6 +238,35 @@
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
+            }
+
+            #overlay {
+                position: absolute;    
+                top: 0;
+                left: 0;
+                bottom: 0px;
+                right: 0;
+                z-index: 1000;
+
+                background-color: #000000C0;
+                overflow: hidden;
+            }
+
+            #popup {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+
+                max-width: 90%;
+                max-height: 50%;
+
+                border: 1px solid rgb(29, 122, 0);
+                border-radius: 5px;
+                background-color: white;
+                padding: 8px 16px;
+
+                z-index: 1500;
             }
         </style>
     </head>
