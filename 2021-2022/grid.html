@@ -1,0 +1,231 @@
+<html>
+
+    <head>
+        
+        <title>Magic Peace Grid</title>
+
+        <script type='text/javascript'>
+
+            games = [
+                {
+                    is_icon: true,
+                    rows: [
+                        '101011',
+                        '000000',
+                        '000000',
+                        '100010',
+                        '110110',
+                        '111111',
+                    ]
+                },
+                {
+                    is_icon: true,
+                    rows: [
+                        '101011',
+                        '101011',
+                        '111111',
+                        '011100',
+                        '100010',
+                        '011001',
+                    ]
+                },
+                {
+                    is_icon: false,
+                    rows: [
+                        'U_N__0',
+                        '_P___1',
+                        'L_U__0',
+                        '_G__G0',
+                        'E__D_0',
+                        '100111',
+                    ]
+                },
+                {
+                    is_icon: false,
+                    rows: [
+                        '_H_EL1',
+                        'L____1',
+                        '__O_W0',
+                        '_R_L_0',
+                        '__D__1',
+                        '100001',
+                    ]
+                }
+            ]
+
+            var current_game = 0;
+
+            function newGame(){
+                var body = document.body;
+                var round = games[current_game];
+                var table = document.createElement('table');
+
+                body.innerHTML = '';
+
+                if( round == undefined ){
+                    body.innerHTML = '<div id=\'end\'><h1>Well done!</h1><p>You have corrected all the grids!</p></div>';
+                    return;
+                }
+
+                for(var current_row=0; current_row < 6; current_row++){
+                    var row = document.createElement('tr');
+
+                    for (let current_col = 0; current_col < 6; current_col++) {
+                        var cell_value = round.rows[current_row][current_col]
+                        var cell = document.createElement('td');
+                        cell.classList.add('cell');
+
+                        if( cell_value == '0' ){
+                            cell.classList.add('black_cell');
+                        }
+
+                        if( !round.is_icon ){
+                            if(  cell_value == '_' ){
+                                cell.innerHTML = randomLetter();
+                                cell.classList.add('black_cell');
+                            }
+                            else if( cell_value == '0' || cell_value == '1' ){
+                                cell.innerHTML = '&nbsp;';
+                            }
+                            else{
+                                cell.innerHTML = cell_value;
+                            }
+                        }
+
+                        if( current_col < 5 && current_row < 5 ){
+                            cell.style.cursor = 'pointer';
+                
+                            cell.addEventListener('click', function(){
+                                flipCell(this);
+                            });
+                        }
+
+                        row.appendChild(cell);
+                    }
+
+                    table.appendChild(row);
+                }
+
+                var row_error = randomInt(5);
+                var col_error = randomInt(5);
+
+                flipCell( table.children[col_error].children[row_error] );
+
+                body.appendChild(table)
+            }
+
+            function flipCell(cell){
+                if( cell.classList.contains('black_cell') ){
+                    cell.classList.remove('black_cell');
+                }
+                else{
+                    cell.classList.add('black_cell');
+                }
+
+                setTimeout( () => {
+                    if( checkResult() ){
+                        alert('You win !\n');
+
+                        current_game++;
+                        newGame();
+                    }
+                }, 50)
+            }
+
+            function checkResult(){
+                var round = games[current_game];
+                var table = document.body.children[0];
+
+                if( table == undefined ){ return false; }
+                
+                for(var current_row=0; current_row < 5; current_row++){
+                    for (let current_col = 0; current_col < 5; current_col++) {
+                        var expect_value = round.rows[current_row][current_col];
+                        var cell_value = table.children[current_row].children[current_col].classList.contains('black_cell') ? '0' : '1';
+
+                        if( !round.is_icon ){
+                            expect_value = expect_value == '_' ? '0' : '1';
+                        }
+
+                        if( expect_value != cell_value ){
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
+            }
+
+            function randomLetter(){
+                var letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                return letters[randomInt(26)];
+            }
+
+            // Return a int between [0, max[
+            function randomInt(max){
+                return Math.floor(Math.random() * max);
+            }
+        </script>
+
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            body{
+                margin: 0;
+                padding: 2px;
+                background-color: white;
+            }
+
+            table{
+                position: absolute;
+                table-layout: fixed;
+            }
+
+            @media all and (orientation:landscape) {   
+                table {
+                    width: 100vh;
+                    height: 100vh;
+                    left: 50%;
+                    transform: translate(-50%, 0);
+                }
+            }
+
+            @media all and (orientation:portrait) {   
+                table {
+                    width: 100vw;
+                    height: 100vw;
+                    top: 50%;
+                    transform: translate(0, -50%);
+                }
+            }
+
+
+            .cell {
+                text-align: center;
+                border: 1px solid black;
+                background-color: white;
+                margin: 1px;
+            }
+
+            .black_cell {
+                background-color: black;
+            }
+
+            #end {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        </style>
+    </head>
+
+    <body>
+        Loading...
+        <script>
+            newGame();
+        </script>
+    </body>
+</html>
